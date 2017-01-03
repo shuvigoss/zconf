@@ -1,0 +1,13 @@
+[
+  {
+    "id": "dashboard",
+    "name": "首页",
+    "path": "/dashboard",
+    "image": "fa fa-dashboard",
+    "roles": [
+      "ROOT",
+      "ADMIN",
+      "USER"
+    ]
+  }
+]
