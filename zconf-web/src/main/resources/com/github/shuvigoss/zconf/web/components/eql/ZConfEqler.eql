@@ -2,15 +2,15 @@
 select root_path, admin_auth, create_time, read_auth
 from zconf
 where 1=1
--- isNotEmpty(rootPath)
-and root_path = #rootPath#
---
+-- isNotEmpty rootPath
+and root_path like '#rootPath#'
+-- end
 
 -- [findPageByUser]
 select root_path, admin_auth, create_time, read_auth
 from zconf z, zconf_users zu
 where z.root_path = zu.zconf_root_path
--- isNotEmpty(rootPath)
-and z.root_path = #rootPath#
---
+-- isNotEmpty rootPath
+and z.root_path like '#rootPath#'
+-- end
 and zu.users_username = #username#

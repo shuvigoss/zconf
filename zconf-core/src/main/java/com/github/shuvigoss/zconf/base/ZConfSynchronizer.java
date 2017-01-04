@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -121,6 +122,10 @@ public class ZConfSynchronizer {
 
   private void reload(String key) {
     zconf.remove(key);
+  }
+
+  public void mergeKeys(Set<String> keys) {
+    zconf.doMerge(keys);
   }
 
   public void noticeSync() {

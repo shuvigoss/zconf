@@ -29,6 +29,8 @@ public abstract class ConvertibleZConfigure extends ZConfInternal implements Con
   @Override
   public <V> V getC(String key) {
     ZConfData data = getData(key);
+    if (data == null) return null;
+
     if (!canConvert(data)) throw new ConvertibleException("no ValueConvertor key:" + key);
     //noinspection unchecked
     ConvertorWrapper<V> convertorWrapper = convertorCache.get(key);
@@ -92,7 +94,8 @@ public abstract class ConvertibleZConfigure extends ZConfInternal implements Con
   @Override
   protected void afterRemove(String key) {
     ConvertorWrapper remove = convertorCache.remove(key);
-    log.info("remove convertor {}", remove.convertor.getClass().getName());
+    if (remove != null)
+      log.info("remove convertor {}", remove.convertor.getClass().getName());
   }
 
   private static class ConvertorWrapper<V> {

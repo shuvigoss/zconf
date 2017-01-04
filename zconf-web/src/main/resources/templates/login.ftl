@@ -7,7 +7,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <b>Admin</b>LTE
+        <b>ZConf</b>
     </div>
   <!-- /.login-logo -->
     <div class="login-box-body">
@@ -21,6 +21,7 @@
             <div class="form-group has-feedback">
                 <input type="password" class="form-control" placeholder="Password" name="password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                <span class="help-block" id="msg" style="display: none;"></span>
             </div>
             <div class="row">
                 <div class="col-xs-8">
@@ -32,8 +33,7 @@
                 </div>
               <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="button" id="login"
-                            class="btn btn-primary btn-block btn-flat">登录</button>
+                    <button type="button" id="login" class="btn btn-primary btn-block btn-flat">登录</button>
                 </div>
               <!-- /.col -->
             </div>
@@ -59,6 +59,12 @@
         $("#remeber").iCheck("check");
       }
 
+      function showErrorMessage(msg) {
+        var msgDiv = $("#msg");
+        $(".form-group").removeClass("has-feedback").addClass("has-error");
+        msgDiv.show().text(msg);
+      }
+
       $("#login").click(function () {
         $.ajax(G.basePath + "/login", {
           dataType: "json",
@@ -66,10 +72,14 @@
           data: JSON.stringify($("#loginForm").serializeObject()),
           contentType: "application/json ;charset=utf-8",
           success: function (data) {
-            window.location.href = G.basePath + "/dashboard";
+            if (data.status) {
+              window.location.href = G.basePath + "/dashboard";
+            } else {
+              showErrorMessage(data.message);
+            }
           },
           error: function () {
-            alert("error")
+            showErrorMessage("系统异常!");
           }
         })
       })

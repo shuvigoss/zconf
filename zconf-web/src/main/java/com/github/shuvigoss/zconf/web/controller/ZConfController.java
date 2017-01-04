@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +37,7 @@ import java.util.Objects;
 
 import static com.github.shuvigoss.zconf.base.Const.*;
 import static com.github.shuvigoss.zconf.web.utils.UserLoginUtil.isRoot;
+import static com.github.shuvigoss.zconf.web.utils.ZconfUtil.like;
 
 /**
  * @author shuvigoss@gmail.com (Wei Shu)
@@ -42,6 +45,7 @@ import static com.github.shuvigoss.zconf.web.utils.UserLoginUtil.isRoot;
 @Controller
 @RequestMapping("/zconf")
 public class ZConfController extends BaseController {
+  private final Logger log = LoggerFactory.getLogger(ZConfController.class);
 
   @Resource
   private CuratorFramework client;
@@ -52,7 +56,7 @@ public class ZConfController extends BaseController {
   @Resource
   private ZConfEqler zConfEqler;
 
-  @RequestMapping("/index")
+  @RequestMapping("")
   public String index() {
     return "zconf/zconf-index";
   }
@@ -66,9 +70,13 @@ public class ZConfController extends BaseController {
     boolean isAdmin = isRoot(userRoles);
     List<Zconf> result;
     if (isAdmin)
-      result = zConfEqler.findPage(request, request.getPath());
+      result = zConfEqler.findPage(like(request.getPath()), request);
     else
-      result = zConfEqler.findPageByUser(request, request.getPath(), user.getUsername());
+      result = zConfEqler.findPageByUser(
+          like(request.getPath()),
+          user.getUsername(),
+          request
+      );
     request.setResult(result);
     return success(request);
   }
@@ -97,7 +105,8 @@ public class ZConfController extends BaseController {
             .parse(new KVPair<>(ZconfUtil.parse(path), ArrayUtils.addAll(header, bytes)));
         result.add(data);
       }
-    } catch (Exception ignored) {
+    } catch (Exception e) {
+      log.error("查询异常", e);
       return fail(result, "查询异常");
     }
     return success(result);
@@ -135,6 +144,7 @@ public class ZConfController extends BaseController {
       request.setKey(key);
       return success(request);
     } catch (Exception e) {
+      log.error("", e);
       return fail(null, "未找到:" + keyPath);
     }
   }
@@ -157,6 +167,7 @@ public class ZConfController extends BaseController {
         );
       }
     } catch (Exception e) {
+      log.error("创建节点异常", e);
       return fail(false, "创建节点异常");
     }
     return success(true);
@@ -181,7 +192,22 @@ public class ZConfController extends BaseController {
         );
       }
     } catch (Exception e) {
+      log.error("更新节点异常", e);
       return fail(false, "更新节点失败");
+    }
+    return success(true);
+  }
+
+  @RequestMapping(value = "/detail/delete", method = RequestMethod.GET)
+  public
+  @ResponseBody
+  Result<Boolean> delete(String rootPath) {
+    validateAccess(rootPath);
+    try {
+      client.delete().forPath(rootPath);
+    } catch (Exception e) {
+      log.error("删除节点异常", e);
+      return fail(false, "删除节点失败");
     }
     return success(true);
   }

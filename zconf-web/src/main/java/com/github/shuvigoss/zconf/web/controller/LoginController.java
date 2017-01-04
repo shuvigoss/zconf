@@ -3,6 +3,7 @@ package com.github.shuvigoss.zconf.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.github.shuvigoss.zconf.web.components.eql.UserEqler;
+import com.github.shuvigoss.zconf.web.components.eql.entity.Role;
 import com.github.shuvigoss.zconf.web.components.eql.entity.User;
 import com.github.shuvigoss.zconf.web.controller.base.BaseController;
 import com.github.shuvigoss.zconf.web.controller.base.Result;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 import static com.github.shuvigoss.zconf.web.utils.Constants.COOKIE_REMEBER;
@@ -63,11 +65,13 @@ public class LoginController extends BaseController {
   ) {
     String pwdmd5 = Hashing.md5().hashString(user.getPassword(), UTF_8).toString();
     User member = userEqler.login(user.getUsername(), pwdmd5);
+
     if (member == null)
       return fail(EMPTY, "错误的用户名密码");
     if (!member.getActive())
       return fail(EMPTY, "账户异常,请联系管理员");
-
+    List<Role> roles = userEqler.findUserRoles(user.getUsername());
+    member.setRoles(roles);
     doRemeber(user, name);
     writeCookie(member);
     return success(EMPTY, "success");
@@ -78,7 +82,7 @@ public class LoginController extends BaseController {
     String userInfo = JSON.toJSONString(
         member,
         new SimplePropertyPreFilter(
-            User.class, "username")
+            User.class, "username", "roles")
     ) + "|" + System.currentTimeMillis();
 
     TripleDesCryptor des3 = new TripleDesCryptor();

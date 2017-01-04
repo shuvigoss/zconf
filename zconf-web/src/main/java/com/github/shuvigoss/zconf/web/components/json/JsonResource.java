@@ -54,4 +54,5 @@ public class JsonResource implements ResourceLoaderAware {
     //noinspection unchecked
     return (T) resources.get(key);
   }
+
 }

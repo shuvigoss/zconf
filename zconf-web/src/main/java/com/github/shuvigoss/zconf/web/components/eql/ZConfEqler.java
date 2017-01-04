@@ -23,11 +23,10 @@ public interface ZConfEqler {
 
   String base = "select root_path, admin_auth, create_time, read_auth ";
 
-  List<Zconf> findPage(EqlPage page, @Param("rootPath") String rootPath);
+  List<Zconf> findPage(@Param("rootPath") String rootPath, EqlPage page);
 
-  List<Zconf> findPageByUser(EqlPage page,
-                             @Param("rootPath") String rootPath,
-                             @Param("username") String username);
+  List<Zconf> findPageByUser(@Param("rootPath") String rootPath,
+                             @Param("username") String username, EqlPage page);
 
   @Sql(base + "from zconf where root_path=##")
   Zconf findOne(String rootPath);

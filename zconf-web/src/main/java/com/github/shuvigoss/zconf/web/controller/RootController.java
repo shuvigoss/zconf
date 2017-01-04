@@ -29,6 +29,7 @@ import java.util.Map;
 import static com.github.shuvigoss.zconf.web.utils.Constants.USER;
 import static com.github.shuvigoss.zconf.web.utils.PasswordRandom.generateShortUuid;
 import static com.github.shuvigoss.zconf.web.utils.ZconfUtil.createACL;
+import static com.github.shuvigoss.zconf.web.utils.ZconfUtil.like;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -52,7 +53,7 @@ public class RootController extends BaseController {
   @Value("${zconf.zookeeper.rootPath}")
   private String rootPath;
 
-  @RequestMapping("/zconf")
+  @RequestMapping("")
   public String createZConfIndex() {
     return "zconf/admin-index";
   }
@@ -61,7 +62,7 @@ public class RootController extends BaseController {
   public
   @ResponseBody
   Result<ZConfRequest> findPage(@RequestBody final ZConfRequest request) {
-    List<Zconf> result = zConfEqler.findPage(request, request.getPath());
+    List<Zconf> result = zConfEqler.findPage(like(request.getPath()), request);
     request.setResult(result);
     return success(request);
   }

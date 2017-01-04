@@ -173,6 +173,17 @@
       });
     }
 
+    $scope.delete = function (key) {
+      var r = confirm("确定删除？");
+      if (r) {
+        $http.get("${simple.get("js.base.path")}/zconf/detail/delete?rootPath=" +
+            rootPath + "/" + key,
+            $scope.query).success(function (data) {
+          $scope.load();
+        });
+      }
+    };
+
     $scope.load();
   });
 

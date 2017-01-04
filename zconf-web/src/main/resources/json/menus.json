@@ -6,7 +6,25 @@
     "image": "fa fa-dashboard",
     "roles": [
       "ROOT",
-      "ADMIN",
+      "USER"
+    ]
+  },
+  {
+    "id": "zconfManager",
+    "name": "ZConf管理",
+    "path": "/admin",
+    "image": "fa fa-cog",
+    "roles": [
+      "ROOT"
+    ]
+  },
+  {
+    "id": "zconfConfig",
+    "name": "ZConf配置",
+    "path": "/zconf",
+    "image": "fa fa-folder-open",
+    "roles": [
+      "ROOT",
       "USER"
     ]
   }

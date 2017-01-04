@@ -1,6 +1,7 @@
 package com.github.shuvigoss.zconf.web.utils;
 
 import com.github.shuvigoss.zconf.web.components.ApplicationContextHolder;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apache.zookeeper.data.ACL;
@@ -59,6 +60,11 @@ public abstract class ZconfUtil {
       Throwables.propagate(e);
     }
     return result;
+  }
+
+  public static String like(String source) {
+    if (Strings.isNullOrEmpty(source)) return "";
+    return "%" + source + "%";
   }
 
 }

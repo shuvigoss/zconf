@@ -36,7 +36,9 @@ public abstract class ZConfInternal implements ZConfigure {
 
   @Override
   public String get(String key) {
-    return confCache.get(key).getData();
+    ZConfData zConfData = confCache.get(key);
+    if (zConfData == null) return null;
+    return zConfData.getData();
   }
 
   protected ZConfData getData(String key) {
@@ -60,7 +62,7 @@ public abstract class ZConfInternal implements ZConfigure {
         log.debug("current zxid:{}, new zxid:{}", currentZxid, newZxid);
       }
     }
-    doMerge(conf);
+    doMerge(conf.keySet());
   }
 
   private void put(String key, ZConfData data) {
@@ -83,10 +85,9 @@ public abstract class ZConfInternal implements ZConfigure {
 
   protected void afterRemove(String key) {}
 
-  private void doMerge(Map<String, byte[]> conf) {
+  public void doMerge(Set<String> keys) {
     Set<String> currentKeys = confCache.keySet();
-    Set<String> newKeys = conf.keySet();
-    Sets.SetView<String> willRemove = Sets.difference(currentKeys, newKeys);
+    Sets.SetView<String> willRemove = Sets.difference(currentKeys, keys);
     for (String oldKey : willRemove)
       remove(oldKey);
 
