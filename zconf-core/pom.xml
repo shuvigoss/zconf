@@ -24,6 +24,13 @@
         <developerConnection>scm:git:git@github.com:shuvigoss/zconf.git</developerConnection>
     </scm>
 
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/</url>
+        </license>
+    </licenses>
+
     <developers>
         <developer>
             <id>shuvigoss</id>
